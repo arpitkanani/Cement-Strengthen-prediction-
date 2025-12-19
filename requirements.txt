@@ -5,5 +5,11 @@ matplotlib
 seaborn 
 scikit-learn
 scipy
+mysql-connector-python
+python-dotenv
+pymysql
+xlrd
+openpyxl
+ipykernel
 
 #-e .
