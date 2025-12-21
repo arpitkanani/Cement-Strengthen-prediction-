@@ -19,7 +19,7 @@ class DataIngestion:
         logging.info("Data ingestion Initiate")
         try:
             df=pd.read_csv(r'E:\Data Analysis\Cement-Strenthen\notebooks\data\cement_data_cleaned.csv')
-            print(df.head())
+            
             logging.info("Read the dataset as dataframe")
             os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path),exist_ok=True)
             df.to_csv(self.ingestion_config.raw_data_path,index=False,header=True)

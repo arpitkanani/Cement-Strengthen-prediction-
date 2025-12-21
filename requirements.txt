@@ -11,5 +11,7 @@ pymysql
 xlrd
 openpyxl
 ipykernel
+xgboost
+catboost
 
 #-e .
