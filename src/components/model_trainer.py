@@ -1,10 +1,13 @@
 import sys,os
+from urllib.parse import urlparse
+import warnings
+warnings.filterwarnings('ignore')
 import pandas as pd
-
+import mlflow
 
 from src.logger import logging
 from src.exception import CustomException
-from src.utils import evaluate_model,save_obj
+from src.utils import evaluate_model,save_obj,evalute_model_score
 
 from dataclasses import dataclass
 from sklearn.model_selection import GridSearchCV
@@ -12,9 +15,13 @@ from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor,Ada
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression,Lasso,Ridge
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.svm import SVR
+from xgboost import XGBRegressor
+from catboost import CatBoostRegressor
+
+import dagshub
 
 
+dagshub.init(repo_owner='arpitkanani', repo_name='Cement-Strengthen-prediction-', mlflow=True)
 
 @dataclass
 class ModelTrainerConfig:
@@ -45,8 +52,8 @@ class ModelTrainer:
                 "Random Forest Regressor":RandomForestRegressor(),
                 "Adaboost Regressor":AdaBoostRegressor(),
                 "GradiantBoost Regressor":GradientBoostingRegressor(),
-                "KNN Regressor":KNeighborsRegressor(),
-                
+                "XGBRegressor":XGBRegressor(),
+                "CatBoostRegressor":CatBoostRegressor()
             }
             param = {
 
@@ -90,10 +97,19 @@ class ModelTrainer:
                     #"subsample": [0.8, 1.0]
                 },
 
-                "KNN Regressor": {
-                    "n_neighbors": [3, 5, 7, 9],
-                    "weights": ["uniform", "distance"],
-                    #"metric": ["euclidean", "manhattan"]
+                'XGBRegressor' : {
+                    "n_estimators": [200, 400],
+                    "learning_rate": [0.03, 0.05, 0.1],
+                    "max_depth": [4, 6, 8],
+                    #"subsample": [0.7, 0.8, 1.0],
+                    #"colsample_bytree": [0.7, 0.8, 1.0],
+                    "reg_lambda": [1, 5, 10]    
+                },
+                'CatBoostRegressor':{
+                    #"iterations": [300, 500],
+                    #"learning_rate": [0.03, 0.05, 0.1],
+                    "depth": [4, 6, 8],
+                    "l2_leaf_reg": [1, 3, 5, 7]
                 }
                 
             }
@@ -116,11 +132,56 @@ class ModelTrainer:
 
             logging.info(f"best Model Found, Model Name :{best_model_name}, R2_score : {best_model_score}")
 
+            print("this is the best model")
+            print(best_model_name)
+
+            models_names=list(param.keys())
+            
+            actual_model=""
+
+            for model in models_names:
+                if best_model_name == model:
+                    actual_model=actual_model + model
+            
+            
+            best_params=param[actual_model]
+
+            mlflow.set_registry_uri("https://dagshub.com/arpitkanani/Cement-Strengthen-prediction-.mlflow")
+            tracking_url_type_store= urlparse(mlflow.get_tracking_uri()).scheme
+
+            #ml flow pipe line
+            with mlflow.start_run():
+                predicted_qualities=best_model.predict(X_test)
+
+                (score,rmse,mae)=evalute_model_score(y_test,predicted_qualities)
+
+                mlflow.log_params(best_params)
+
+                mlflow.log_metric("rmse",rmse)
+                mlflow.log_metric("r2",score)
+                mlflow.log_metric("mae",mae)
+                
+
+                if tracking_url_type_store != 'file':
+                    mlflow.sklearn.log_model(sk_model=best_model,name="model")
+
+                else:
+                    mlflow.sklearn.log_model(best_model,'model')
+
+                
+            
+
+            #mlflow.autolog()
+            if best_model_score<0.6:
+                raise CustomException("No best Model Found") # type: ignore
+            logging.info(f"not a best model found in training and test dataset")
+
+
             save_obj(
                 file_path=self.model_trainer_config.trained_model_path
                 ,obj=best_model
             )
-            predicted=best_model.predict(X_test)
+            
             r2_score=best_model_score
             return r2_score
 

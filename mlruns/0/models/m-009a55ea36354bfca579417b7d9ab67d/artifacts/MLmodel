@@ -1,0 +1,22 @@
+artifact_path: file:///E:/Data Analysis/Cement-Strenthen/mlruns/0/models/m-009a55ea36354bfca579417b7d9ab67d/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.19
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+mlflow_version: 3.7.0
+model_id: m-009a55ea36354bfca579417b7d9ab67d
+model_size_bytes: 620261
+model_uuid: m-009a55ea36354bfca579417b7d9ab67d
+prompts: null
+run_id: 2fed0764d94c46218e654f11b08f452f
+utc_time_created: '2025-12-21 16:34:07.843203'
