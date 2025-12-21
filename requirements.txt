@@ -13,7 +13,5 @@ openpyxl
 ipykernel
 xgboost
 catboost
-dagshub
-mlflow
 
 #-e .
