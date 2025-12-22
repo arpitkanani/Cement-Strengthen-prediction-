@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cement Strength Prediction</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; padding:0; }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top left, #2C666E, #0b2f33 60%);
+      color:#F0EDEE;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:12px;
+    }
+
+    .card {
+      width:100%;
+      max-width:640px;
+      background: linear-gradient(180deg,#12383d,#0a2326);
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 18px 40px rgba(0,0,0,0.6);
+    }
+
+    h1 {
+      text-align:center;
+      margin:6px 0 8px;
+      font-size:22px;
+    }
+
+    .subtitle {
+      text-align:center;
+      font-size:13px;
+      margin-bottom:14px;
+      color:#cfdede;
+    }
+
+    .form-row {
+      display:flex;
+      gap:12px;
+      margin-bottom:10px;
+    }
+
+    .form-group { flex:1; }
+
+    label {
+      display:block;
+      font-size:13px;
+      margin-bottom:4px;
+    }
+
+    input[type=text] {
+      width:100%;
+      padding:9px 10px;
+      border-radius:8px;
+      border:1px solid #2C666E;
+      background:#0e2b2f;
+      color:#F0EDEE;
+      font-size:13px;
+    }
+
+    input:focus {
+      outline:none;
+      border-color:#F0EDEE;
+      box-shadow:0 0 0 2px rgba(240,237,238,0.15);
+    }
+
+    .predict-btn {
+      width:100%;
+      padding:11px;
+      margin-top:8px;
+      font-size:15px;
+      background: linear-gradient(135deg,#F0EDEE,#b7d6da);
+      border:none;
+      border-radius:10px;
+      color:#12383d;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .result {
+      margin-top:14px;
+      padding:12px;
+      border-radius:10px;
+      display:flex;
+      justify-content:space-between;
+      border:1px solid rgba(240,237,238,0.25);
+    }
+    /* === Smooth focus animation === */
+    input,
+    select {
+        transition:
+            background-color 0.25s ease,
+            box-shadow 0.25s ease,
+            border-color 0.25s ease;
+    }
+
+
+   /* === Light focus style (intentional) === */
+    input:focus,
+    select:focus {
+        background-color: #eaf3ff;     /* light blue/white */
+        color: #0b1220;                /* dark text */
+        border-color: #7aa7ff;
+        box-shadow: 0 0 0 3px rgba(122, 167, 255, 0.35);
+        outline: none;
+    }
+
+    /* === Autofill matches focus color === */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px #eaf3ff inset !important;
+        -webkit-text-fill-color: #0b1220 !important;
+        caret-color: #0b1220;
+        transition: background-color 9999s ease-in-out 0s;
+    }
+
+    /* === Dark-mode select dropdown fix === */
+    select {
+        background-color: #0e2b2f;
+        color: #F0EDEE;
+        border: 1px solid #2C666E;
+        border-radius: 8px;
+        padding: 9px 10px;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+   
+    /* Arrow fix (optional) */
+    select::-ms-expand {
+        display: none;
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Cement Strength Prediction</h1>
+    <div class="subtitle">Enter material quantities in m^3 mixtures and age</div>
+
+    <form action="{{ url_for('predict_datapoint') }}" method="post">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cement">Cement</label>
+          <input type="text" id="cement" name="cement" placeholder="eg. 350" required  >
+        </div>
+        <div class="form-group">
+          <label for="blast_furance_slag">Blast Furnace Slag</label>
+          <input type="text" id="blast_furance_slag" name="blast_furance_slag" placeholder="eg. 120" required >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fly_ash">Fly Ash</label>
+          <input type="text" id="fly_ash" name="fly_ash" placeholder="eg. 54" required  >
+        </div>
+        <div class="form-group">
+          <label for="water">Water</label>
+          <input type="text" id="water" name="water" placeholder="eg. 180"
+ required >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="superplasticizer">Superplasticizer</label>
+          <input type="text" id="superplasticizer" name="superplasticizer" placeholder="eg. 12"
+ required >
+        </div>
+        <div class="form-group">
+          <label for="coarse_aggregate">Coarse Aggregate</label>
+          <input type="text" id="coarse_aggregate" name="coarse_aggregate" placeholder="eg. 980"
+ required >
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fine_aggregate">Fine Aggregate</label>
+          <input type="text" id="fine_aggregate" name="fine_aggregate" placeholder="eg. 650" required >
+        </div>
+        <div class="form-group">
+          <label for="age_in_day">Age (Days)</label>
+          <input type="text" id="age_in_day" name="age_in_day" placeholder="1-365" required >
+        </div>
+      </div>
+
+      <button type="submit" class="predict-btn">Predict Strength</button>
+    </form>
+
+    {% if result is not none %}
+    <div class="result">
+      <span>Cement Strenght by given Parameter is :</span>
+      <strong>{{ result }}</strong>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -18,7 +18,7 @@ class DataIngestion:
     def initiate_data_ingestion(self):
         logging.info("Data ingestion Initiate")
         try:
-            df=pd.read_csv(r'E:\Data Analysis\Cement-Strenthen\notebooks\data\cement_data_cleaned.csv')
+            df=pd.read_csv(r'E:\Data Analysis\Cement-Strenthen\notebooks\data\renamed_cement_data.csv')
             
             logging.info("Read the dataset as dataframe")
             os.makedirs(os.path.dirname(self.ingestion_config.raw_data_path),exist_ok=True)
@@ -31,7 +31,7 @@ class DataIngestion:
             return(
                 self.ingestion_config.train_data_path,
                 self.ingestion_config.test_data_path,
-                self.ingestion_config.raw_data_path
+                
             )
         except Exception as e:
             raise CustomException(e,sys) # type: ignore

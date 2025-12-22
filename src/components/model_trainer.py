@@ -3,22 +3,21 @@ from urllib.parse import urlparse
 import warnings
 warnings.filterwarnings('ignore')
 import pandas as pd
-import mlflow
+import mlflow #type: ignore
 
 from src.logger import logging
 from src.exception import CustomException
 from src.utils import evaluate_model,save_obj,evalute_model_score
 
 from dataclasses import dataclass
-from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor,AdaBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.linear_model import LinearRegression,Lasso,Ridge
-from sklearn.neighbors import KNeighborsRegressor
-from xgboost import XGBRegressor
-from catboost import CatBoostRegressor
 
-import dagshub
+from xgboost import XGBRegressor #type: ignore
+from catboost import CatBoostRegressor # type:ignore
+
+import dagshub # type: ignore
 
 
 dagshub.init(repo_owner='arpitkanani', repo_name='Cement-Strengthen-prediction-', mlflow=True)
@@ -182,8 +181,7 @@ class ModelTrainer:
                 ,obj=best_model
             )
             
-            r2_score=best_model_score
-            return r2_score
+            
 
         except Exception as e:
             logging.info("error occured in model trainer's initiate model training method")
