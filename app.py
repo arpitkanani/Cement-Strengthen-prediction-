@@ -33,18 +33,19 @@ def predict_datapoint():
         )
 
         pred_df=data.get_data_as_dataframe()
-        print(pred_df)
+        
 
         
         prediction_pipeline=PredictPipeline()
         result=prediction_pipeline.predict(pred_df)
         session['result'] = round(result[0], 2)
 
-            # 🔑 REDIRECT instead of render
+            
         return redirect(url_for('predict_datapoint'))
     else:
         result = session.pop('result', None)
         return render_template('home.html', result=result)
+    
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
     

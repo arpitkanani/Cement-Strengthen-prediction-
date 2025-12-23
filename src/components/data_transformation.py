@@ -30,7 +30,7 @@ class DataTransformation:
             
             cat_cols=[]
             logging.info("pipeline initiated")
-
+            
             num_pipeline=Pipeline(
                 steps=[
                     ('imputer',SimpleImputer(strategy='median')),
