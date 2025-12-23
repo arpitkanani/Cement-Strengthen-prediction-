@@ -20,7 +20,15 @@ from catboost import CatBoostRegressor # type:ignore
 import dagshub # type: ignore
 
 
-dagshub.init(repo_owner='arpitkanani', repo_name='Cement-Strengthen-prediction-', mlflow=True)
+try:
+    dagshub.init(
+        repo_owner='arpitkanani',
+        repo_name='Cement-Strengthen-prediction-',
+        mlflow=True
+    )
+except Exception as e:
+    print("DAGsHub init failed, continuing without it:", e)
+
 
 @dataclass
 class ModelTrainerConfig:
@@ -73,8 +81,8 @@ class ModelTrainer:
                 "Decision Tree": {
                     "criterion": ["squared_error", "friedman_mse"],
                     "max_depth": [None, 5,3, 10, 20],
-                   # "min_samples_split": [2, 5, 10],
-                    #"min_samples_leaf": [1, 2, 4]
+                    "min_samples_split": [2, 5, 10],
+                    "min_samples_leaf": [1, 2, 4]
                 },
 
                 "Random Forest Regressor": {
@@ -105,7 +113,7 @@ class ModelTrainer:
                     "reg_lambda": [1, 5, 10]    
                 },
                 'CatBoostRegressor':{
-                    #"iterations": [300, 500],
+                    "iterations": [300, 500,1000],
                     #"learning_rate": [0.03, 0.05, 0.1],
                     "depth": [4, 6, 8],
                     "l2_leaf_reg": [1, 3, 5, 7]
