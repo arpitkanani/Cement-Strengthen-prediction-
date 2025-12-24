@@ -27,26 +27,8 @@ To predict the **compressive strength of cement** based on its material composit
 
 ---
 
-##  Project Structure
-
-├── app.py
-├── requirements.txt
-├── runtime.txt
-├── README.md
-├── src/
-│ ├── init.py
-│ ├── components/
-│ ├── pipelines/
-│ │ ├── prediction_pipeline.py
-│ │ └── training_pipeline.py
-│ ├── utils.py
-│ ├── exception.py
-│ └── logger.py
-├── templates/
-│ ├── index.html
-└── home.html
-
 #### here is the link --> https://cement-strengthen-prediction-1.onrender.com/predictdata
+
 
 
 
